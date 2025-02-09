@@ -35,26 +35,11 @@ def tem_dep_ela_con():
         for i, energy in enumerate(helm_E):
             unitcel_str = Poscar.from_file(f"{deformation_strs[i]}/static_run/CONTCAR")
             lattice = unitcel_str.structure.lattice.matrix
-            en_per_area = energy / np.linalg.norm(np.cross(lattice[0], lattice[1]))
+            energy_per_atom = energy / unitcel_str.structure.num_sites
+            en_per_area = energy_per_atom / np.linalg.norm(np.cross(lattice[0], lattice[1]))
             helm_en_per_area.append(en_per_area)
 
         coefficients = np.polyfit(strain_list, helm_en_per_area, 2)
-
-        #experiment
-        # natoms = len(Structure.from_file('POSCAR_unitcell').sites)
-        # p = np.polyfit(strain_list, helm_en_per_area, 2)
-        # V_Tpa = V_T / natoms # 5 is number of atoms in the cell
-        # curvatures = np.round((p[0] * 160.217 / V_Tpa), 4)
-        # c01 = (2 / 3) * curvatures[1] - curvatures[0]
-        # c00 = curvatures[0] - c01
-        # c33 = (2 / 3) * curvatures[2]
-        # c44 = c33
-        # c55 = c33
-        # c02 = c01
-        # c12 = c01
-        # c11 = c00
-        # c22 = c00
-        #c = mirror(c)
 
         polynomial = np.poly1d(coefficients)
         x_fit = np.linspace(min(strain_list), max(strain_list), 100)
@@ -71,7 +56,7 @@ def tem_dep_ela_con():
     plt.xlabel("Temperature (K)")
     plt.ylabel("Elastic constant (GPa)")
     plt.grid(True)
-    plt.savefig("QHA_phonopy_results/elastic_constants_try_1.png", dpi=300)
+    plt.savefig("QHA_manual_results/elastic_constant.png", dpi=300)
     plt.close()
 
 
@@ -107,4 +92,4 @@ if __name__ == '__main__':
         reverse=False)
     deformation_strs = [f"qha_{j:.3f}" for j in qha_dirs]
     tem_dep_ela_con()
-    another_temp_dep()
+    #another_temp_dep()

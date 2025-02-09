@@ -73,12 +73,13 @@ python QHA_manual_process.py
 ```sh
 python QHA_elastic_constants.py
 ```
-- Computes lattice constant's variations with temperature.
+- Computes elastic constant's variations with temperature.
 
 
 ## Output Files
 - `thermal_properties.yaml`: Contains extracted force constants.
-- `QHA_phonopy_results/`: Stores processed thermal properties.
+- `QHA_phonopy_results/`: Stores processed thermal properties output from Phonopy.
+- `QHA_manual_results/`: Stores processed thermal properties output such as strain-volume, elastic constants, lattice parameters etc..
 - `QHA_phonpy_process/e-v.dat`: Energy-volume relationship data.
 - Computed lattice and elastic property variations.
 

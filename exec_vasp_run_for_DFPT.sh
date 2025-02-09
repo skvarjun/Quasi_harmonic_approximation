@@ -13,8 +13,10 @@ for folder in $folders; do
       echo "vasp run not expected in $folder as dir. contains just input files for vasp DFPT/static run"
    else
       pwd
+      cp "../vasp_input/INCAR" "INCAR"
+      cp "../vasp_input/KPOINTS" "KPOINTS"
       mv POSCAR POSCAR-unitcell
-      phonopy -d --dim 2 2 1 -c POSCAR-unitcell
+      phonopy -d --dim 2 2 2 -c POSCAR-unitcell
       phonopy -d --dim 1 1 1 --pa auto -c SPOSCAR
       mv SPOSCAR POSCAR
       mpirun -np 64 vasp_std

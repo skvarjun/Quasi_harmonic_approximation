@@ -9,7 +9,7 @@ for folder in $folders; do
     else
       mv POSCAR POSCAR_
       phonopy --fc vasprun.xml
-      phonopy-load --mesh 31 31 31 -t
+      phonopy-load --mesh 31 31 31 -t --tmax=2010
       mv POSCAR_ POSCAR
     fi
     cd ..

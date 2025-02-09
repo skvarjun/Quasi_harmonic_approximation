@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import yaml
+from scipy.interpolate import griddata
 from yaml import CLoader as Loader
 from phonopy import PhonopyQHA
 import matplotlib.pyplot as plt
@@ -45,7 +46,7 @@ def main():
         free_energy=np.transpose(fe),
         cv=np.transpose(cv),
         entropy=np.transpose(entropy),
-        t_max=1000,
+        t_max=2010,
         verbose=True,
     )
 
@@ -62,47 +63,7 @@ def main():
     qha.plot_heat_capacity_P_polyfit().savefig("QHA_phonopy_results/plot_heat_capacity_P_polyfit.png")
     qha.plot_gruneisen_temperature().savefig("QHA_phonopy_results/plot_gruneisen_temperature.png")
 
-    qha.write_volume_temperature("QHA_phonopy_results/volume_temperature.dat")
-
-
-def phase_data():
-    volumes, energies, temperatures, cv, entropy, fe = get_vol_en()
-    P_vals = np.linspace(0, 150, 100)
-
-    GE = []
-    for p in P_vals:
-        qha = PhonopyQHA(
-            volumes,
-            energies,
-            pressure=p,
-            temperatures=temperatures,
-            free_energy=np.transpose(fe),
-            cv=np.transpose(cv),
-            entropy=np.transpose(entropy),
-            t_max=1000,
-            verbose=False,
-        )
-
-        x = qha.gibbs_temperature
-        GE.append(x)
-
-
-    P_grid, T_grid = np.meshgrid(P_vals, range(0, 1000, 10))
-    G = np.array(GE)
-
-    fig = plt.figure(figsize=(10, 6))
-    ax = fig.add_subplot(111, projection='3d')
-
-    surf = ax.plot_surface(P_grid, T_grid, G, cmap='viridis',  alpha=0.8)
-
-    ax.set_xlabel('Pressure (GPa)')
-    ax.set_ylabel('Temperature (K)')
-    ax.set_zlabel('Gibbs Free Energy (eV)')
-    ax.set_title('Finding minima of Gibbs Free Energy')
-    fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10)
-    plt.savefig('QHA_phonopy_results/phase_data.png', dpi=300)
 
 
 if __name__ == "__main__":
     main()
-    phase_data()
