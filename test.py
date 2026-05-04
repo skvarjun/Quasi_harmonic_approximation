@@ -1,34 +1,29 @@
-
 import time
 import minimalmodbus
 
+instrument = minimalmodbus.Instrument('/dev/ttyUSB0', slaveaddress=49, debug=False)
+instrument.serial.baudrate = 921600
+instrument.serial.baudrate = 115200
 
-PORT = "/dev/ttyUSB0"
-SLAVE_ADDRESS = 45
-
-
-instrument = minimalmodbus.Instrument(PORT, SLAVE_ADDRESS)
-instrument.serial.baudrate = 19200
-instrument.serial.bytesize = 8
 instrument.serial.parity = minimalmodbus.serial.PARITY_NONE
-instrument.serial.stopbits = 1
-instrument.serial.timeout = 3
-instrument.mode = minimalmodbus.MODE_RTU
-instrument.clear_buffers_before_each_transaction = True
+instrument.serial.timeout = 2
 
+communication = False
+while communication ==  False:
+    time.sleep(1)
+    try:
+        instrument.read_float(43030, 4, 2, 3)
+    except:
+        print("No communication with sensor, trying again...")
+    else:
+        communication = True
+        print("Communication with sensor established.")
+
+time.sleep(2)
 
 while True:
-    try:
-        value = instrument.read_float(
-            registeraddress=40000,
-            functioncode=4,
-            number_of_registers=2,
-            byteorder=3,
-        )
-
-        print("Methane:", value)
-
-    except Exception as exc:
-        print("Read error:", exc)
-
-    time.sleep(1)
+    val = instrument.read_float(43030, 4, 2, 3)
+    mystring = ' '.join([str(x) for x in val])
+    myfloat = float(mystring)
+    rndfloat = round(myfloat, 2)
+    print(rndfloat)
